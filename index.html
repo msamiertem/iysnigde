@@ -530,6 +530,14 @@ let cloudReady = false;
 let cloudUnsubscribe = null;
 const cloudTimers = new Map();
 let pendingCloudRender = false;
+// Kayıt sırasında DOM yeniden çizilmez. Ayrıca henüz Firebase tarafından
+// onaylanmamış yerel alanlar, gelen snapshot tarafından ezilmez.
+const dirtyFields = new Set();
+let remoteStructureChanged = false;
+
+function dirtyKey(id, field){
+  return `${id}|||${field}`;
+}
 const fields = [
   "Koordinatör Adayı","Telefon Numarası","Referans Olan Kişi","Görüşme Sağlandı mı?","Sonuç (Olumlu/Olumsuz)",
   "Alternatif Koordinatör Adayı","Alternatif Telefon Numarası","Alternatif Referans Olan Kişi","Alternatif Görüşme Sağlandı mı?","Alternatif Sonuç (Olumlu/Olumsuz)"
@@ -752,9 +760,9 @@ function syncDomValuesFromRecords(){
 }
 
 function flushPendingCloudRender(){
-  if(!pendingCloudRender || isEditingDataField()) return;
+  // Bilerek boş: Firebase veya blur olayı veri girişi sırasında tabloyu
+  // yeniden çizemez. Render yalnızca kullanıcının açık bir arayüz işlemiyle olur.
   pendingCloudRender = false;
-  renderPreservePosition();
 }
 
 function subscribeCloud(){
@@ -774,7 +782,14 @@ function subscribeCloud(){
         const incomingFields = d.fields && typeof d.fields === "object" ? d.fields : {};
 
         if(Object.keys(incomingFields).length){
-          edits[id] = {...(edits[id] || {}), ...incomingFields};
+          if(!edits[id]) edits[id] = {};
+          Object.entries(incomingFields).forEach(([field, value]) => {
+            // Kullanıcı bu alanı yerelde değiştirdiyse Firebase'den gelen
+            // daha eski snapshot yerel değeri asla ezemez.
+            if(!dirtyFields.has(dirtyKey(id, field))){
+              edits[id][field] = value;
+            }
+          });
         }
 
         if(d.kind === "custom" || d.custom === true){
@@ -814,18 +829,15 @@ function subscribeCloud(){
       rebuild();
       updateStats();
 
-      // Normal alan güncellemelerinde listeyi yeniden kurma.
-      // Böylece Tab ile başka kutuya geçildiğinde odak kesinlikle kaybolmaz.
+      // Firebase snapshot yolu yalnızca mevcut kutuların değerlerini yerinde
+      // günceller. Kayıt sırasında render() KESİNLİKLE çağrılmaz.
       syncDomValuesFromRecords();
 
-      // Yalnızca kurum ekleme/silme gibi yapısal bir değişiklik varsa render gerekir.
+      // Başka bir cihazdan kurum eklenmiş/silinmişse mevcut veri girişini
+      // bozmamak için listeyi kendiliğinden yeniden kurmuyoruz.
+      // Bir sonraki filtre/sekme işlemi veya sayfa yenilemesi yeni yapıyı gösterir.
       if(structureChanged){
-        if(isEditingDataField()){
-          pendingCloudRender = true;
-        }else{
-          pendingCloudRender = false;
-          renderPreservePosition();
-        }
+        remoteStructureChanged = true;
       }
     },
     error => {
@@ -847,9 +859,10 @@ function scheduleCloudSave(id, immediate=false){
     cloudTimers.delete(id);
     try{
       const rec = records.find(x => x.id === id);
+      const sentFields = {...(edits[id] || {})};
       const payload = {
         kind: rec && rec.custom ? "custom" : "base",
-        fields: edits[id] || {},
+        fields: sentFields,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       };
       if(rec && rec.custom){
@@ -863,6 +876,15 @@ function scheduleCloudSave(id, immediate=false){
         payload.record = base;
       }
       await db.collection(CLOUD_COLLECTION).doc(id).set(payload, {merge:true});
+
+      // Yalnızca gönderdiğimiz değer hâlâ güncelse dirty işaretini kaldır.
+      // Kullanıcı bu sırada aynı alana yeni bir değer yazdıysa işaret korunur.
+      Object.entries(sentFields).forEach(([field, sentValue]) => {
+        if((edits[id] || {})[field] === sentValue){
+          dirtyFields.delete(dirtyKey(id, field));
+        }
+      });
+
       cloudReady = true;
       setCloudState("Firebase'e kaydedildi", "online");
       clearTimeout(window.__cloudSavedTimer);
@@ -941,6 +963,7 @@ function rebuild(){
 function persistField(id, field, value){
   if(!edits[id]) edits[id] = {};
   edits[id][field] = value;
+  dirtyFields.add(dirtyKey(id, field));
   localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
   const rec = records.find(x => x.id === id);
   if(rec) rec[field] = value;
@@ -1099,14 +1122,8 @@ function bindTableEvents(){
         e.target.classList.toggle("interview-yes",value==="Evet");
         e.target.classList.toggle("interview-no",value==="Hayır");
       }
-      if(document.getElementById("resultFilter").value || document.getElementById("emptyCandidate").checked) render();
-    });
-    el.addEventListener("blur", () => {
-      // Tab ile başka bir veri alanına geçerken render yapılmaz.
-      // Render gerekiyorsa ancak odak veri giriş alanlarının dışına çıktıktan sonra uygulanır.
-      setTimeout(() => {
-        if(!isEditingDataField()) flushPendingCloudRender();
-      }, 180);
+      // ÖNEMLİ: Veri girişinde render() çağrılmaz.
+      // Filtre açık olsa bile satır kullanıcı veri girerken yerinden oynamaz.
     });
   });
   document.querySelectorAll("[data-remove]").forEach(btn => btn.addEventListener("click", e => removeCustom(e.currentTarget.dataset.remove)));
@@ -1184,13 +1201,13 @@ function importBackup(file){
   };
   reader.readAsText(file);
 }
-document.getElementById("searchInput").addEventListener("input",render);
-document.getElementById("levelFilter").addEventListener("change",render);
-document.getElementById("resultFilter").addEventListener("change",render);
-document.getElementById("emptyCandidate").addEventListener("change",render);
+document.getElementById("searchInput").addEventListener("input",()=>{remoteStructureChanged=false;render();});
+document.getElementById("levelFilter").addEventListener("change",()=>{remoteStructureChanged=false;render();});
+document.getElementById("resultFilter").addEventListener("change",()=>{remoteStructureChanged=false;render();});
+document.getElementById("emptyCandidate").addEventListener("change",()=>{remoteStructureChanged=false;render();});
 document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{
   document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));tab.classList.add("active");
-  activeArea=tab.dataset.area;render();
+  activeArea=tab.dataset.area;remoteStructureChanged=false;render();
 }));
 document.getElementById("addBtn").addEventListener("click",openAddDialog);
 document.getElementById("cancelAdd").addEventListener("click",()=>document.getElementById("addDialog").close());
