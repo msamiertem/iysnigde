@@ -1,0 +1,1200 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>İyilikte Yarışan Sınıflar — Koordinatör Adayı Takip Paneli</title>
+<style>
+  :root{
+    --green-950:#12372a;
+    --green-900:#174936;
+    --green-800:#1d5b42;
+    --green-700:#267356;
+    --green-600:#2e8a67;
+    --green-100:#e9f5ef;
+    --green-50:#f4faf7;
+    --amber-100:#fff4d6;
+    --amber-700:#a86608;
+    --blue-50:#f1f7ff;
+    --blue-100:#e3efff;
+    --blue-700:#2c5f9e;
+    --red-50:#fff1f1;
+    --red-700:#b93b3b;
+    --slate-950:#17211d;
+    --slate-700:#53605a;
+    --slate-500:#77837d;
+    --slate-300:#ccd4d0;
+    --slate-200:#dfe5e2;
+    --slate-100:#edf1ef;
+    --white:#fff;
+    --shadow:0 14px 34px rgba(22,55,42,.09);
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:#f5f7f6;
+    color:var(--slate-950);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    line-height:1.45;
+  }
+  button,input,select{font:inherit}
+  button{cursor:pointer}
+  .topbar{
+    background:linear-gradient(135deg,var(--green-950),var(--green-800));
+    color:#fff;
+    padding:26px 28px 74px;
+  }
+  .topbar-inner{max-width:1700px;margin:0 auto}
+  .brand-row{
+    display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand-mark{
+    width:48px;height:48px;border-radius:15px;display:grid;place-items:center;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);
+  }
+  .brand-mark svg{width:27px;height:27px}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.72;font-weight:800}
+  h1{font-size:clamp(23px,3vw,34px);line-height:1.15;margin:4px 0 0;letter-spacing:-.02em}
+  .tagline{font-size:13px;opacity:.78}
+  .wrap{max-width:1700px;margin:-48px auto 40px;padding:0 20px}
+  .dashboard{
+    display:grid;grid-template-columns:repeat(5,minmax(160px,1fr));gap:12px;margin-bottom:14px;
+  }
+  .stat{
+    background:#fff;border:1px solid var(--slate-200);border-radius:16px;padding:16px 18px;
+    box-shadow:0 8px 22px rgba(25,54,43,.05);
+  }
+  .stat-label{font-size:12px;color:var(--slate-500);font-weight:700;margin-bottom:6px}
+  .stat-value{font-size:27px;font-weight:850;letter-spacing:-.03em}
+  .stat-sub{font-size:11px;color:var(--slate-500);margin-top:2px}
+  .panel{
+    background:#fff;border:1px solid var(--slate-200);border-radius:var(--radius);box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .toolbar{
+    padding:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--slate-200);
+    background:linear-gradient(#fff,#fbfcfb);
+  }
+  .search{
+    position:relative;flex:1 1 310px;min-width:230px;
+  }
+  .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;color:var(--slate-500)}
+  .control{
+    height:40px;border:1px solid var(--slate-300);background:#fff;border-radius:11px;padding:0 12px;color:var(--slate-950);
+    outline:none;transition:.15s border,.15s box-shadow;
+  }
+  .search .control{width:100%;padding-left:38px}
+  .control:focus{border-color:var(--green-600);box-shadow:0 0 0 3px rgba(46,138,103,.12)}
+  select.control{min-width:145px}
+  .check{
+    display:flex;align-items:center;gap:7px;height:40px;padding:0 11px;border:1px solid var(--slate-300);border-radius:11px;
+    color:var(--slate-700);font-size:13px;font-weight:650;white-space:nowrap;
+  }
+  .check input{accent-color:var(--green-700)}
+  .btn{
+    border:1px solid var(--slate-300);background:#fff;border-radius:11px;height:40px;padding:0 13px;font-weight:750;
+    color:var(--slate-700);display:inline-flex;align-items:center;gap:7px;
+  }
+  .btn:hover{background:var(--slate-100)}
+  .btn.primary{background:var(--green-800);color:#fff;border-color:var(--green-800)}
+  .btn.primary:hover{background:var(--green-900)}
+  .btn.danger{color:var(--red-700)}
+  .tabs{
+    display:flex;gap:6px;padding:10px 16px 0;overflow:auto;background:#fff;
+  }
+  .tab{
+    border:0;background:transparent;color:var(--slate-500);font-weight:800;padding:10px 13px;border-radius:10px 10px 0 0;
+    white-space:nowrap;border-bottom:3px solid transparent;
+  }
+  .tab:hover{background:var(--green-50);color:var(--green-800)}
+  .tab.active{color:var(--green-800);border-bottom-color:var(--green-700);background:var(--green-50)}
+  .tab span{
+    margin-left:5px;background:var(--slate-100);color:var(--slate-700);border-radius:999px;padding:2px 7px;font-size:11px;
+  }
+  .tab.active span{background:var(--green-100);color:var(--green-800)}
+  .table-meta{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;
+    border-top:1px solid var(--slate-200);border-bottom:1px solid var(--slate-200);background:#fafcfb;
+    color:var(--slate-500);font-size:12px;
+  }
+  .table-scroll{overflow:auto;max-height:68vh}
+  table{border-collapse:separate;border-spacing:0;min-width:1900px;width:100%}
+  th,td{border-right:1px solid var(--slate-200);border-bottom:1px solid var(--slate-200);padding:7px 8px;vertical-align:middle}
+  th{
+    position:sticky;top:0;z-index:6;background:#f4f7f5;font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+    color:#52605a;text-align:left;font-weight:850;line-height:1.25;
+  }
+  th.primary-head{background:#edf6f1;color:var(--green-900)}
+  th.alt-head{background:#f3f7fd;color:var(--blue-700)}
+  td{background:#fff}
+  tr:hover td{background:#fbfdfc}
+  th:first-child,td:first-child{
+    position:sticky;left:0;z-index:5;border-left:0;
+  }
+  th:first-child{z-index:8;background:#edf2ef;min-width:310px}
+  td:first-child{background:#fff;min-width:310px;max-width:310px}
+  tr:hover td:first-child{background:#fbfdfc}
+  .school{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
+  }
+  .school-name{font-size:12px;font-weight:800;line-height:1.25}
+  .school-meta{display:flex;align-items:center;gap:5px;margin-top:5px;flex-wrap:wrap}
+  .badge{
+    font-size:9px;font-weight:850;letter-spacing:.03em;border-radius:999px;padding:3px 6px;
+    background:var(--slate-100);color:var(--slate-700);
+  }
+  .badge.area{background:var(--green-100);color:var(--green-800)}
+  .badge.custom{background:var(--amber-100);color:var(--amber-700)}
+  .remove{
+    width:25px;height:25px;border:0;background:transparent;color:#9aa39f;border-radius:7px;display:grid;place-items:center;flex:none;
+  }
+  .remove:hover{background:var(--red-50);color:var(--red-700)}
+  .cell-input,.cell-select{
+    width:100%;height:34px;border:1px solid transparent;border-radius:8px;background:transparent;padding:0 7px;font-size:12px;
+    outline:none;color:var(--slate-950);
+  }
+  .cell-input:hover,.cell-select:hover{border-color:var(--slate-200);background:#fff}
+  .cell-input:focus,.cell-select:focus{border-color:var(--green-600);background:#fff;box-shadow:0 0 0 3px rgba(46,138,103,.09)}
+  td.primary-col{background:#fcfefd}
+  td.alt-col{background:#fcfdff}
+  tr:hover td.primary-col{background:#f8fcfa}
+  tr:hover td.alt-col{background:#f8fbff}
+  .cell-select.status-positive{background:#eaf7f0;color:#176444;font-weight:800}
+  .cell-select.status-negative{background:#fff0f0;color:#aa3333;font-weight:800}
+  .cell-select.interview-yes{background:#eef8f3;color:#1f6a4d;font-weight:750}
+  .cell-select.interview-no{background:#f5f5f5;color:#737b77;font-weight:750}
+  .empty-state{padding:54px 22px;text-align:center;color:var(--slate-500)}
+  .empty-icon{width:54px;height:54px;margin:0 auto 12px;border-radius:16px;background:var(--green-50);display:grid;place-items:center}
+  .empty-state h3{color:var(--slate-950);margin:0 0 5px;font-size:18px}
+  .empty-state p{margin:0 auto 16px;max-width:520px;font-size:13px}
+  .footer{
+    display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;
+    font-size:11px;color:var(--slate-500);padding:12px 3px 0;
+  }
+  .autosave{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:7px;height:7px;background:#d39a24;border-radius:50%;box-shadow:0 0 0 4px rgba(211,154,36,.10)}
+  .dot.online{background:#3b9b72;box-shadow:0 0 0 4px rgba(59,155,114,.09)}
+  .dot.offline{background:#b93b3b;box-shadow:0 0 0 4px rgba(185,59,59,.09)}
+  .cloud-note{font-weight:700}
+  dialog{
+    width:min(540px,calc(100% - 28px));border:0;padding:0;border-radius:18px;box-shadow:0 28px 80px rgba(0,0,0,.22);
+  }
+  dialog::backdrop{background:rgba(20,31,26,.52);backdrop-filter:blur(2px)}
+  .modal-head{padding:18px 20px 12px;border-bottom:1px solid var(--slate-200)}
+  .modal-head h2{font-size:19px;margin:0}
+  .modal-body{padding:18px 20px;display:grid;gap:13px}
+  .field label{display:block;font-size:11px;font-weight:800;color:var(--slate-700);margin-bottom:5px}
+  .field .control{width:100%}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:13px 20px;border-top:1px solid var(--slate-200)}
+  .toast{
+    position:fixed;right:20px;bottom:20px;z-index:30;background:#1e2f28;color:#fff;border-radius:12px;padding:10px 13px;
+    font-size:12px;font-weight:700;box-shadow:0 12px 30px rgba(0,0,0,.18);opacity:0;transform:translateY(10px);pointer-events:none;
+    transition:.2s;
+  }
+  .toast.show{opacity:1;transform:none}
+  @media(max-width:1080px){
+    .dashboard{grid-template-columns:repeat(3,1fr)}
+  }
+  .mobile-cards{display:none}
+  .mobile-card{
+    background:#fff;border-bottom:1px solid var(--slate-200);padding:14px;
+  }
+  .mobile-card:last-child{border-bottom:0}
+  .mobile-card-head{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;
+  }
+  .mobile-card .school-name{font-size:14px;line-height:1.3}
+  .mobile-section{
+    border:1px solid var(--slate-200);border-radius:13px;overflow:hidden;margin-top:10px;
+  }
+  .mobile-section-title{
+    padding:8px 10px;font-size:11px;font-weight:850;letter-spacing:.03em;text-transform:uppercase;
+    background:#f4f7f5;color:var(--green-900);
+  }
+  .mobile-section.alt .mobile-section-title{background:var(--blue-50);color:var(--blue-700)}
+  .mobile-field{
+    display:grid;grid-template-columns:118px 1fr;gap:8px;align-items:center;padding:7px 9px;
+    border-top:1px solid var(--slate-200);
+  }
+  .mobile-field:first-of-type{border-top:0}
+  .mobile-label{font-size:10px;font-weight:800;color:var(--slate-500);line-height:1.2}
+  .mobile-field .cell-input,.mobile-field .cell-select{
+    min-height:42px;height:42px;border:1px solid var(--slate-300);background:#fff;border-radius:10px;
+    font-size:16px;padding:0 10px;
+  }
+  .mobile-field .cell-input:focus,.mobile-field .cell-select:focus{
+    border-color:var(--green-600);box-shadow:0 0 0 3px rgba(46,138,103,.10);
+  }
+  .mobile-actions{display:flex;justify-content:flex-end;margin-top:9px}
+  .mobile-remove{
+    border:1px solid #efd2d2;background:var(--red-50);color:var(--red-700);border-radius:9px;
+    min-height:38px;padding:0 11px;font-size:12px;font-weight:800;
+  }
+
+  @media(max-width:760px){
+    body{background:#f1f4f2}
+    .topbar{padding:18px 15px 58px}
+    .brand{align-items:flex-start}
+    .brand-mark{width:42px;height:42px;border-radius:13px;flex:none}
+    .brand-mark svg{width:24px;height:24px}
+    .eyebrow{font-size:10px}
+    h1{font-size:21px;max-width:270px}
+    .tagline{display:none}
+    .wrap{padding:0 8px;margin-top:-42px}
+    .dashboard{
+      grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:9px;
+    }
+    .stat{padding:11px 12px;border-radius:13px}
+    .stat-label{font-size:10px;margin-bottom:3px}
+    .stat-value{font-size:22px}
+    .stat-sub{font-size:9px}
+    .stat:last-child{grid-column:1/-1}
+    .panel{border-radius:15px}
+    .toolbar{
+      padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;
+    }
+    .search{grid-column:1/-1;min-width:0;width:100%}
+    .control,.btn,.check{height:44px;min-height:44px;border-radius:10px}
+    .toolbar select.control{min-width:0;width:100%;font-size:13px}
+    .toolbar .check{grid-column:1/-1;justify-content:flex-start}
+    .toolbar .btn{justify-content:center;padding:0 8px;font-size:12px}
+    #addBtn{grid-column:1/-1}
+    .tabs{
+      padding:7px 8px 0;gap:3px;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    }
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{font-size:12px;padding:10px 9px}
+    .table-meta{padding:10px 12px;font-size:10px}
+    .table-meta>div:last-child{display:none}
+    .table-scroll{display:none}
+    .mobile-cards{display:block}
+    .footer{padding:9px 4px 0;font-size:10px}
+    .footer>div:last-child{display:none}
+    dialog{width:calc(100% - 18px);border-radius:15px}
+    .modal-body{padding:14px}
+    .two-col{grid-template-columns:1fr}
+    .modal-foot{padding:11px 14px}
+    .modal-foot .btn{flex:1;justify-content:center}
+    .toast{left:10px;right:10px;bottom:10px;text-align:center}
+  }
+  @media(max-width:390px){
+    .mobile-field{grid-template-columns:100px 1fr;padding:7px}
+    .mobile-label{font-size:9px}
+    .dashboard{grid-template-columns:1fr 1fr}
+  }
+  body.auth-locked{overflow:hidden}
+  body.auth-locked > .topbar,
+  body.auth-locked > .wrap{display:none!important}
+  .login-screen{
+    position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;
+    padding:20px;background:linear-gradient(145deg,var(--green-950),var(--green-800));
+  }
+  .login-card{
+    width:min(430px,100%);background:#fff;border-radius:22px;padding:26px;
+    box-shadow:0 30px 90px rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.18);
+  }
+  .login-brand{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+  .login-brand .brand-mark{background:var(--green-100);color:var(--green-800);border-color:transparent}
+  .login-brand h2{margin:0;font-size:23px;letter-spacing:-.02em}
+  .login-brand p{margin:3px 0 0;color:var(--slate-500);font-size:12px}
+  .login-field{margin-top:13px}
+  .login-field label{display:block;font-size:11px;font-weight:850;color:var(--slate-700);margin-bottom:6px}
+  .login-input-wrap{position:relative}
+  .login-input{
+    width:100%;height:48px;border:1px solid var(--slate-300);border-radius:12px;padding:0 13px;
+    outline:none;background:#fff;font-size:16px;color:var(--slate-950);
+  }
+  .login-input:focus{border-color:var(--green-600);box-shadow:0 0 0 3px rgba(46,138,103,.12)}
+  .password-toggle{
+    position:absolute;right:7px;top:7px;height:34px;border:0;background:var(--slate-100);color:var(--slate-700);
+    border-radius:9px;padding:0 10px;font-size:11px;font-weight:800;
+  }
+  .login-btn{
+    width:100%;height:48px;margin-top:17px;border:0;border-radius:12px;background:var(--green-800);color:#fff;
+    font-weight:850;font-size:14px;
+  }
+  .login-btn:hover{background:var(--green-900)}
+  .login-btn:disabled{opacity:.65;cursor:wait}
+  .login-error{
+    display:none;margin-top:12px;padding:10px 11px;border-radius:10px;background:var(--red-50);color:var(--red-700);
+    font-size:12px;font-weight:700;
+  }
+  .login-error.show{display:block}
+  .login-foot{margin-top:14px;text-align:center;font-size:10px;color:var(--slate-500)}
+  .header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+  .user-chip{
+    display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.10);border-radius:11px;font-size:11px;font-weight:750;color:#fff;
+  }
+  .user-avatar{width:27px;height:27px;border-radius:9px;background:rgba(255,255,255,.15);display:grid;place-items:center;font-weight:900}
+  .logout-btn{
+    height:36px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;
+    border-radius:10px;padding:0 11px;font-size:11px;font-weight:800;
+  }
+  .logout-btn:hover{background:rgba(255,255,255,.16)}
+  @media(max-width:760px){
+    .login-screen{padding:12px}
+    .login-card{padding:20px 17px;border-radius:18px}
+    .login-brand h2{font-size:20px}
+    .header-actions{gap:6px}
+    .user-chip{padding:5px 7px}
+    .user-chip .user-email{display:none}
+    .logout-btn{height:34px;padding:0 9px}
+  }
+  @media print{
+    .topbar{padding:12px 0 18px;background:#fff;color:#000}
+    .wrap{margin:0;max-width:none;padding:0}
+    .dashboard,.toolbar,.tabs,.footer,.remove{display:none!important}
+    .panel{box-shadow:none;border:0}
+    .table-scroll{max-height:none;overflow:visible}
+    table{min-width:0;font-size:8px}
+    th,td{position:static!important;padding:3px}
+    .cell-input,.cell-select{border:0!important;padding:0;height:auto;font-size:8px;appearance:none}
+  }
+</style>
+</head>
+<body class="auth-locked">
+<div id="loginScreen" class="login-screen" aria-live="polite">
+  <form id="loginForm" class="login-card" autocomplete="on">
+    <div class="login-brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 20.1S4.6 15.8 4.6 9.8A4.1 4.1 0 0 1 12 7.2a4.1 4.1 0 0 1 7.4 2.6c0 6-7.4 10.3-7.4 10.3Z" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M8.4 12.1h7.2M12 8.5v7.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h2>Yönetim Paneli Girişi</h2>
+        <p>İyilikte Yarışan Sınıflar · Niğde</p>
+      </div>
+    </div>
+    <div class="login-field">
+      <label for="loginUsername">Kullanıcı Adı</label>
+      <input id="loginUsername" class="login-input" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required placeholder="Kullanıcı adınız">
+    </div>
+    <div class="login-field">
+      <label for="loginPassword">Şifre</label>
+      <div class="login-input-wrap">
+        <input id="loginPassword" class="login-input" type="password" autocomplete="current-password" required placeholder="Şifreniz" style="padding-right:78px">
+        <button id="passwordToggle" class="password-toggle" type="button">Göster</button>
+      </div>
+    </div>
+    <button id="loginBtn" class="login-btn" type="submit">Giriş Yap</button>
+    <div id="loginError" class="login-error" role="alert"></div>
+    <div class="login-foot">Yetkisiz erişim engellenmiştir. Oturum Firebase Authentication ile doğrulanır.</div>
+  </form>
+</div>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand-row">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 20.1S4.6 15.8 4.6 9.8A4.1 4.1 0 0 1 12 7.2a4.1 4.1 0 0 1 7.4 2.6c0 6-7.4 10.3-7.4 10.3Z" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M8.4 12.1h7.2M12 8.5v7.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="eyebrow">İyilikte Yarışan Sınıflar</div>
+          <h1>Koordinatör Adayı Takip Paneli</h1>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="tagline">Yetim Gülerse Dünya Güler</div>
+        <div class="user-chip" id="userChip" hidden>
+          <span class="user-avatar" id="userAvatar">K</span>
+          <span class="user-email" id="currentUserName">Kullanıcı</span>
+        </div>
+        <button class="logout-btn" id="logoutBtn" type="button" hidden>Çıkış Yap</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="dashboard" aria-label="Özet">
+    <div class="stat"><div class="stat-label">Toplam Kurum</div><div class="stat-value" id="statTotal">0</div><div class="stat-sub">listede yer alan kurum</div></div>
+    <div class="stat"><div class="stat-label">Aday Belirlendi</div><div class="stat-value" id="statCandidate">0</div><div class="stat-sub">birincil koordinatör adayı</div></div>
+    <div class="stat"><div class="stat-label">Görüşme Yapıldı</div><div class="stat-value" id="statInterview">0</div><div class="stat-sub">“Evet” olarak işaretlenen</div></div>
+    <div class="stat"><div class="stat-label">Olumlu Sonuç</div><div class="stat-value" id="statPositive">0</div><div class="stat-sub">birincil aday sonucu</div></div>
+    <div class="stat"><div class="stat-label">Alternatif Aday</div><div class="stat-value" id="statAlt">0</div><div class="stat-sub">alternatif isim girilen</div></div>
+  </section>
+
+  <section class="panel">
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+        <input id="searchInput" class="control" type="search" placeholder="Kurum, aday, telefon veya referans ara…">
+      </div>
+      <select id="levelFilter" class="control" aria-label="Kurum türü">
+        <option value="">Tüm kurum türleri</option>
+        <option>ANAOKULU</option><option>İLKOKUL</option><option>ORTAOKUL</option><option>LİSE</option><option>DİĞER</option>
+      </select>
+      <select id="resultFilter" class="control" aria-label="Sonuç">
+        <option value="">Tüm sonuçlar</option>
+        <option value="Olumlu">Olumlu</option>
+        <option value="Olumsuz">Olumsuz</option>
+        <option value="Bos">Sonuç girilmemiş</option>
+      </select>
+      <label class="check"><input type="checkbox" id="emptyCandidate"> Adayı boş olanlar</label>
+      <button class="btn primary" id="addBtn" type="button">＋ Yeni Kurum Ekle</button>
+      <button class="btn" id="csvBtn" type="button">CSV İndir</button>
+      <button class="btn" id="backupBtn" type="button">Yedek Al</button>
+      <button class="btn" id="importBtn" type="button">Yedek Yükle</button>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+      <button class="btn danger" id="resetBtn" type="button">Tümünü Sıfırla</button>
+    </div>
+
+    <nav class="tabs" aria-label="Bölümler">
+      <button class="tab active" data-area="Tümü">Tümü <span id="countAll">0</span></button>
+      <button class="tab" data-area="Merkez Okulları">Merkez Okulları <span id="countCenter">0</span></button>
+      <button class="tab" data-area="Köy ve Kasaba Okulları">Köy ve Kasaba <span id="countVillage">0</span></button>
+      <button class="tab" data-area="İLÇELER">İlçeler <span id="countDistrict">0</span></button>
+    </nav>
+
+    <div class="table-meta">
+      <div><strong id="visibleCount">0</strong> kurum gösteriliyor</div>
+      <div>Değişiklikler giriş yapan yetkili kullanıcılar arasında Firebase ile otomatik senkronize edilir.</div>
+    </div>
+
+    <div id="tableHost"></div>
+  </section>
+
+  <div class="footer">
+    <div class="autosave"><span class="dot" id="cloudDot"></span><span id="saveState" class="cloud-note">Firebase bağlanıyor…</span></div>
+    <div>Kaynak: <span id="sourceName"></span></div>
+  </div>
+</main>
+
+<dialog id="addDialog">
+  <form id="addForm" method="dialog">
+    <div class="modal-head"><h2>Yeni Kurum Ekle</h2></div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="newSchool">Kurum Adı</label>
+        <input id="newSchool" class="control" required maxlength="180" autocomplete="off" placeholder="Kurum adını yazın">
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label for="newArea">Bölüm</label>
+          <select id="newArea" class="control">
+            <option>Merkez Okulları</option>
+            <option>Köy ve Kasaba Okulları</option>
+            <option>İLÇELER</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="newLevel">Kurum Türü</label>
+          <select id="newLevel" class="control">
+            <option>ANAOKULU</option><option>İLKOKUL</option><option>ORTAOKUL</option><option>LİSE</option><option>DİĞER</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn" id="cancelAdd">Vazgeç</button>
+      <button type="submit" class="btn primary">Kurumu Ekle</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+const SOURCE = {"sourceFile": "Iyilikte_Yarisan_Siniflar_Koordinator_Aday_Takip_Listesi(1).xlsx", "headers": ["Kurum Adı", "Koordinatör Adayı", "Telefon Numarası", "Referans Olan Kişi", "Görüşme Sağlandı mı?", "Sonuç (Olumlu/Olumsuz)", "Alternatif Koordinatör Adayı", "Alternatif Telefon Numarası", "Alternatif Referans Olan Kişi", "Alternatif Görüşme Sağlandı mı?", "Alternatif Sonuç (Olumlu/Olumsuz)"], "records": [{"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "ANAKUCAĞI ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-001"}, {"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "ATATÜRK EĞİTİMCİLER ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-002"}, {"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "CUMHURİYET ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-003"}, {"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "GÜMÜŞTAŞ MADENCİLİK A.Ş. ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-004"}, {"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "HAYRİ ARUK ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-005"}, {"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "İNCİ YAVUZ KADIOĞLU ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-006"}, {"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "NASREDDİN HOCA ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-007"}, {"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "NİĞDE ÖZEL EĞİTİM ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-008"}, {"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "PAPATYA ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-009"}, {"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "SAYDE VE MAHMUT TEK ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-010"}, {"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "ÖZENÇ KARDEŞLER ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-011"}, {"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "ŞAHNUR YAPRAK ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-012"}, {"area": "Merkez Okulları", "level": "ANAOKULU", "Kurum Adı": "ŞEHİT EREN BÜLBÜL ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-013"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "75.YIL MUSTAFA ALTUNCU İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-014"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "ALİYA İZZET BEGOVİÇ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-015"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "ALPASLAN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-016"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "ASIM VE ZEYNEP ECEMİŞ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-017"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "BEHZAT ECEMİŞ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-018"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "CEMİL MERİÇ GÖRME ENGELLİLER İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-019"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "CUMHURİYET İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-020"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "DR. SADIK AHMET İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-021"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "DUMLUPINAR İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-022"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "EMİN-EMİNE TEOMAN ÖZEL EĞİTİM UYGULAMA OKULU I. KADEME", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-023"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "HALİL KİTAPÇI İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-024"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "HAZIM TEPEYRAN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-025"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "KEMAL AYDOĞAN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-026"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "KEMAL ÇETİNTÜRK İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-027"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "MEHMET VE EMET AYDOĞAN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-028"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "MEMNUNE-TÜRKER ALTUNCU İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-029"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "MURTAZA VE NAİLE UYANIK İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-030"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "NECİP FAZIL KISAKÜREK İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-031"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "NEZİHE VE TAHSİN KİTAPÇI İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-032"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "NİĞDE MÜZİK İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-033"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "SAKARYA İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-034"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "SELÇUK İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-035"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "SÜLEYMAN FETHİ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-036"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "ZAHİDE SEFER İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-037"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "ŞEHİT OKAN ACAR İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-038"}, {"area": "Merkez Okulları", "level": "İLKOKUL", "Kurum Adı": "ŞEHİT VAROL TOSUN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-039"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "19 MAYIS ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-040"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "23 NİSAN HAVACILAR ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-041"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "5 ŞUBAT ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-042"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "ABDULHAMİT HAN ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-043"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "ALİ ULVİ ARIKAN ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-044"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "ALİYA İZZET BEGOVİÇ ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-045"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "ATATÜRK ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-046"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "EMİN-EMİNE TEOMAN ÖZEL EĞİTİM UYGULAMA OKULU II. KADEME", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-047"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "FATMA VE MEHMET KARACA İMAM HATİP ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-048"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "GAZİ ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-049"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "HALİL KİTAPÇI ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-050"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "İLHANLI ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-051"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "KANUNİ SULTAN SÜLEYMAN ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-052"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "MELİKŞAH İMAM HATİP ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-053"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "MEVLANA ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-054"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "MUHSİN YAZICIOĞLU İMAM HATİP ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-055"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "MURTAZA VE NAİLE UYANIK ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-056"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "NİĞDE İMAM HATİP ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-057"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "NİĞDE MÜZİK ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-058"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "NİĞDE ÖZEL EĞİTİM UYGULAMA OKULU II. KADEME", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-059"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "NİĞDE ÖZEL EĞİTİM UYGULAMA OKULU III. KADEME", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-060"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "NİĞDE ŞEHİT FATİH ÖZDEMİR İMAM HATİP ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-061"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "SAKARYA ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-062"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "SÜLEYMAN FETHİ ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-063"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "ŞEHİT GÖKHAN ALTINALANA ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-064"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "ŞEHİT OKAN ACAR ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-065"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "ŞEHİT SERDAL GÜNEŞ İMAM HATİP ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-066"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "ŞEHİT VAROL TOSUN ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-067"}, {"area": "Merkez Okulları", "level": "ORTAOKUL", "Kurum Adı": "EMİNE ÇETİNTÜRK ANAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-068"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "15 TEMMUZ ŞEHİTLERİ SPOR LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-069"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "75. YIL MEHMET GÖKER MESLEKİ VE TEKNİK ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-070"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "ATATÜRK ANADOLU LİSESİ", "Koordinatör Adayı": "Mevlüt Sami Ertem", "Telefon Numarası": "05058702668", "Referans Olan Kişi": "Mevlüt Sami Ertem", "Görüşme Sağlandı mı?": "Evet", "Sonuç (Olumlu/Olumsuz)": "Olumlu", "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-071"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "ATATÜRK MESLEKİ VE TEKNİK ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-072"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "CUMHURİYET ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-073"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "FATİH ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-074"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "FAİK ŞAHENK MESLEKİ VE TEKNİK ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-075"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "FERTEK ÖZEL EĞİTİM MESLEK OKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-076"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "HACI ZEKİYE ARSLAN ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-077"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "HÜDAVEND HATUN KIZ MESLEKİ VE TEKNİK ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-078"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "MEHMET AKİF TURİZM MESLEKİ VE TEKNİK ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-079"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "MİMAR SİNAN TİCARET MESLEKİ VE TEKNİK ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-080"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "NECMETTİN ERBAKAN KIZ ANADOLU İMAM HATİP LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-081"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "NİĞDE FEN LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-082"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "NİĞDE GÜZEL SANATLAR LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-083"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "NİĞDE MESLEKİ EĞİTİM MERKEZİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-084"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "NİĞDE YUNUS EMRE ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-085"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "NİĞDE ŞEHİT ABİT TÜBER MESLEKİ EĞİTİM MERKEZİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-086"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "RECEP TAYYİP ERDOĞAN ANADOLU İMAM HATİP LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-087"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "REMİDE YILMAZ ATABEK ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-088"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "YAVUZ SULTAN SELİM ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-089"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "ŞEHİT EFE OSMAN APAYDIN ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-090"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "ŞEHİT FAZIL DOĞRUÖZ MESLEKİ VE TEKNİK ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-091"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "ŞEHİT KEMAL TOSUN ANADOLU İMAM HATİP LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-092"}, {"area": "Merkez Okulları", "level": "LİSE", "Kurum Adı": "ŞEHİT YAKUP AVŞAR ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-093"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "AKTAŞ YENİMAHALLE İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-094"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "AKTAŞ ŞEHİT YÜKSEL KABACA İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-095"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "ALAY İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-096"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "AĞCAŞAR ŞEHİT MUSTAFA MEMİŞ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-097"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "AŞLAMA MUKADDER-MURAT BAYATLI İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-098"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "BAĞLAMA ŞEHİT ADNAN SAVAŞ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-099"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "DEĞİRMENLİ ŞEHİT YALÇIN ARAN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-100"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "DİKİLİTAŞ ŞEHİT ERDAL ÇOBAN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-101"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "DÜNDARLI 100. YIL İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-102"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "DÜNDARLI ATATÜRK İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-103"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "EDİKLİ ATATÜRK İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-104"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "EDİKLİ OSMAN GAZİ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-105"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "EDİKLİ ŞEHİT AYHAN ARIKAN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-106"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "ELMALI İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-107"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "FESLEĞEN ECZACI NECLA FİLİBELİ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-108"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "GÖSTERLİ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-109"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "GÜLLÜCE İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-110"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "GÜMÜŞLER İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-111"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "HACIABDULLAH ŞEHİT MUSTAFA AVCI İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-112"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "HACIBEYLİ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-113"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "HASAKÖY ŞEHİT CEMAL ÖZCAN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-114"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "HİMMETLİ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-115"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "HÜYÜK İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-116"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "İÇMELİ ŞEHİT DAVUT YILDIZ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-117"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "KARAATLI ŞEHİT ŞAHİN YILMAZ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-118"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "KAYIRLI HACI MERDAN KAPLAN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-119"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "KİLEDERE İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-120"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "KİLEDERE ŞEHİT BÜLENT TUNÇBİLEK İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-121"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "KİLEDERE ŞEHİT EMRAH ERYILMAZ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-122"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "KONAKLI İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-123"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "KÖMÜRCÜ NEVZAT HATIN KARATAŞ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-124"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "KÖMÜRCÜ ÇANAKKALE ŞEHİTLERİ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-125"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "ORHANLI ORHANGAZİ ŞEHİT HALİS SAYIN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-126"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "OVACIK ŞEHİT BAYRAM AKSOY İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-127"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "PINARCIK MUSTAFA ŞAHİN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-128"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "SAZLICA ERTUĞRUL GAZİ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-129"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "SAZLICA İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-130"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "TEPEKÖY İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-131"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "TIRHAN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-132"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "ULUAĞAÇ ŞEHİT FARUK EREN İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-133"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "YEŞİLGÖLCÜK 75. YIL TÜRKAN YÜKSEL İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-134"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "YEŞİLGÖLCÜK CUMHURİYET İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-135"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "YEŞİLGÖLCÜK YENİMAHALLE İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-136"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "YILDIZTEPE ŞEHİT AHMET SALTIK İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-137"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "ÇARIKLI MEHMET BABAR İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-138"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "ÇAVDARLI ŞEHİT ERDAL ÜNLÜ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-139"}, {"area": "Köy ve Kasaba Okulları", "level": "İLKOKUL", "Kurum Adı": "ÇAYIRLI ŞEHİT AYHAN KARAGÖZ İLKOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-140"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "AKTAŞ ŞEHİT YÜKSEL KABACA ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-141"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "ALAY ŞEHİT OKTAY ÖNDER ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-142"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "AĞCAŞAR HAZİM ARSLANBAY ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-143"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "AŞLAMA MUKADDER-MURAT BAYATLI ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-144"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "BAĞLAMA ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-145"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "DEĞİRMENLİ ŞEHİT YALÇIN ARAN ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-146"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "DİKİLİTAŞ ŞEHİT ERDAL ÇOBAN ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-147"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "DÜNDARLI 100.YIL ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-148"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "DÜNDARLI ATATÜRK ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-149"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "EDİKLİ İMAM HATİP ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-150"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "EDİKLİ ŞEHİT İHSAN YARIMKULAK ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-151"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "ELMALI ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-152"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "GÖSTERLİ ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-153"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "GÜMÜŞLER ŞEHİT NAİL AKDOĞAN ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-154"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "HACIABDULLAH ŞEHİT DOĞAN DEMİR ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-155"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "HASAKÖY ŞEHİT CEMAL ÖZCAN ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-156"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "KARAATLI FATMA CUMA ALİ YILMAZ İMAM HATİP ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-157"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "KAYIRLI ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-158"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "KİLEDERE İMAM HATİP ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-159"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "KİLEDERE ŞEHİT BÜLENT TUNÇBİLEK ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-160"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "KONAKLI ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-161"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "KÖMÜRCÜ NEVZAT HATIN KARATAŞ ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-162"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "KÖMÜRCÜ ÇANAKKALE ŞEHİTLERİ ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-163"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "ORHANLI ŞEHİT CUMA KAYA ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-164"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "OVACIK ŞEHİT BAYRAM AKSOY ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-165"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "SAZLICA ERTUĞRUL GAZİ İMAM HATİP ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-166"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "SAZLICA ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-167"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "YEŞİLGÖLCÜK CUMHURİYET ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-168"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "YEŞİLGÖLCÜK ŞEHİT OSMAN TURGUT ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-169"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "YILDIZTEPE ZEYNEP ERDEN ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-170"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "ÇAVDARLI ŞEHİT ERDAL ÜNLÜ ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-171"}, {"area": "Köy ve Kasaba Okulları", "level": "ORTAOKUL", "Kurum Adı": "ÇAYIRLI ŞEHİT AYHAN KARAGÖZ İMAM HATİP ORTAOKULU", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-172"}, {"area": "Köy ve Kasaba Okulları", "level": "LİSE", "Kurum Adı": "EDİKLİ ŞEHİT ENVER YAMAN ÇOK PROGRAMLI ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-173"}, {"area": "Köy ve Kasaba Okulları", "level": "LİSE", "Kurum Adı": "ELMALI-ÇAYIRLI 80.YIL ÇOK PROGRAMLI ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-174"}, {"area": "Köy ve Kasaba Okulları", "level": "LİSE", "Kurum Adı": "YEŞİLGÖLCÜK ANADOLU İMAM HATİP LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-175"}, {"area": "Köy ve Kasaba Okulları", "level": "LİSE", "Kurum Adı": "YEŞİLGÖLCÜK ŞEHİT RECEP TEKTAŞ ÇOK PROGRAMLI ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-176"}, {"area": "Köy ve Kasaba Okulları", "level": "LİSE", "Kurum Adı": "YILDIZTEPE HACIABDULLAH ŞEHİT MEHMET KAYAHAN ÇOK PROGRAMLI ANADOLU LİSESİ", "Koordinatör Adayı": null, "Telefon Numarası": null, "Referans Olan Kişi": null, "Görüşme Sağlandı mı?": null, "Sonuç (Olumlu/Olumsuz)": null, "Alternatif Koordinatör Adayı": null, "Alternatif Telefon Numarası": null, "Alternatif Referans Olan Kişi": null, "Alternatif Görüşme Sağlandı mı?": null, "Alternatif Sonuç (Olumlu/Olumsuz)": null, "id": "base-177"}], "areas": ["Merkez Okulları", "Köy ve Kasaba Okulları", "İLÇELER"]};
+const STORAGE_KEY = "iyilikte-yarisan-siniflar-koordinator-v1";
+const CUSTOM_KEY = "iyilikte-yarisan-siniflar-custom-v1";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBmtHdM58Gb83S_LQY1JgPwxOl4_Flwh48",
+  authDomain: "iysnigde.firebaseapp.com",
+  projectId: "iysnigde",
+  storageBucket: "iysnigde.firebasestorage.app",
+  messagingSenderId: "631161892084",
+  appId: "1:631161892084:web:0b5944f44363d6e38542a1",
+  measurementId: "G-VZMPYNYBJC"
+};
+
+const CLOUD_COLLECTION = "koordinatorAdaylari";
+let db = null;
+let auth = null;
+let cloudReady = false;
+let cloudUnsubscribe = null;
+const cloudTimers = new Map();
+const fields = [
+  "Koordinatör Adayı","Telefon Numarası","Referans Olan Kişi","Görüşme Sağlandı mı?","Sonuç (Olumlu/Olumsuz)",
+  "Alternatif Koordinatör Adayı","Alternatif Telefon Numarası","Alternatif Referans Olan Kişi","Alternatif Görüşme Sağlandı mı?","Alternatif Sonuç (Olumlu/Olumsuz)"
+];
+const labels = {
+  "Koordinatör Adayı":"Koordinatör Adayı",
+  "Telefon Numarası":"Telefon",
+  "Referans Olan Kişi":"Referans",
+  "Görüşme Sağlandı mı?":"Görüşme?",
+  "Sonuç (Olumlu/Olumsuz)":"Sonuç",
+  "Alternatif Koordinatör Adayı":"Alternatif Aday",
+  "Alternatif Telefon Numarası":"Alt. Telefon",
+  "Alternatif Referans Olan Kişi":"Alt. Referans",
+  "Alternatif Görüşme Sağlandı mı?":"Alt. Görüşme?",
+  "Alternatif Sonuç (Olumlu/Olumsuz)":"Alt. Sonuç"
+};
+
+let edits = safeParse(localStorage.getItem(STORAGE_KEY), {});
+let customRecords = safeParse(localStorage.getItem(CUSTOM_KEY), []);
+let activeArea = "Tümü";
+let records = [];
+
+function setCloudState(text, state="pending"){
+  const label = document.getElementById("saveState");
+  const dot = document.getElementById("cloudDot");
+  if(label) label.textContent = text;
+  if(dot){
+    dot.classList.remove("online","offline");
+    if(state === "online") dot.classList.add("online");
+    if(state === "offline") dot.classList.add("offline");
+  }
+}
+
+function cloudErrorMessage(error){
+  const code = error && error.code ? String(error.code) : "";
+  if(code.includes("permission-denied")) return "Firestore izinleri kapalı";
+  if(code.includes("operation-not-allowed")) return "E-posta/Şifre girişi etkin değil";
+  if(code.includes("unavailable")) return "Firebase çevrimdışı";
+  if(code.includes("failed-precondition")) return "Firebase yapılandırması gerekli";
+  return "Firebase bağlantı hatası";
+}
+
+function usernameToEmail(username){
+  const raw = String(username || "").trim().toLocaleLowerCase("tr-TR");
+  if(raw.includes("@")) return raw;
+  const ascii = raw
+    .replace(/ğ/g,"g").replace(/ü/g,"u").replace(/ş/g,"s")
+    .replace(/ı/g,"i").replace(/ö/g,"o").replace(/ç/g,"c")
+    .replace(/[^a-z0-9._-]+/g,".")
+    .replace(/^\.+|\.+$/g,"");
+  return `${ascii}@iysnigde.app`;
+}
+
+function displayUsername(user){
+  const email = user && user.email ? user.email : "kullanici";
+  return email.endsWith("@iysnigde.app") ? email.slice(0,-"@iysnigde.app".length) : email;
+}
+
+function showLogin(errorText=""){
+  document.body.classList.add("auth-locked");
+  document.getElementById("loginScreen").style.display="flex";
+  document.getElementById("userChip").hidden=true;
+  document.getElementById("logoutBtn").hidden=true;
+  const err=document.getElementById("loginError");
+  err.textContent=errorText;
+  err.classList.toggle("show",Boolean(errorText));
+  setTimeout(()=>document.getElementById("loginUsername").focus(),30);
+}
+
+function showApp(user){
+  document.body.classList.remove("auth-locked");
+  document.getElementById("loginScreen").style.display="none";
+  const name=displayUsername(user);
+  document.getElementById("currentUserName").textContent=name;
+  document.getElementById("userAvatar").textContent=(name[0]||"K").toLocaleUpperCase("tr-TR");
+  document.getElementById("userChip").hidden=false;
+  document.getElementById("logoutBtn").hidden=false;
+  document.getElementById("loginError").classList.remove("show");
+}
+
+function loginErrorMessage(error){
+  const code=error && error.code ? String(error.code) : "";
+  if(code.includes("invalid-credential") || code.includes("user-not-found") || code.includes("wrong-password")) return "Kullanıcı adı veya şifre hatalı.";
+  if(code.includes("too-many-requests")) return "Çok fazla hatalı giriş denemesi yapıldı. Daha sonra tekrar deneyin.";
+  if(code.includes("operation-not-allowed")) return "Firebase Authentication'da E-posta/Şifre girişi etkin değil.";
+  if(code.includes("network-request-failed")) return "İnternet bağlantısı kurulamadı.";
+  return "Giriş yapılamadı. Kullanıcı bilgilerinizi kontrol edin.";
+}
+
+async function initFirebase(){
+  if(typeof firebase === "undefined"){
+    setCloudState("Firebase kütüphanesi yüklenemedi", "offline");
+    showLogin("Firebase kütüphanesi yüklenemedi. İnternet bağlantısını kontrol edin.");
+    return;
+  }
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+
+    try{
+      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    }catch(e){ console.warn("Auth persistence:",e); }
+
+    try{
+      await db.enablePersistence({synchronizeTabs:true});
+    }catch(e){
+      // Çoklu sekme veya tarayıcı kısıtı olduğunda canlı Firestore yine çalışır.
+    }
+
+    auth.onAuthStateChanged(async user => {
+      if(cloudUnsubscribe){ cloudUnsubscribe(); cloudUnsubscribe=null; }
+      if(!user){
+        cloudReady=false;
+        setCloudState("Oturum açılmadı", "offline");
+        showLogin();
+        return;
+      }
+      try{
+        showApp(user);
+        setCloudState("Firebase'e bağlanıyor…");
+        await migrateLocalDataToCloud();
+        subscribeCloud();
+      }catch(error){
+        console.error("Authenticated init:", error);
+        setCloudState(cloudErrorMessage(error) + " · yerel kayıt aktif", "offline");
+      }
+    });
+  }catch(error){
+    console.error("Firebase init:", error);
+    cloudReady = false;
+    setCloudState(cloudErrorMessage(error), "offline");
+    showLogin(cloudErrorMessage(error));
+  }
+}
+
+async function migrateLocalDataToCloud(){
+  if(!db) return;
+  const col = db.collection(CLOUD_COLLECTION);
+  let snap;
+  try{
+    snap = await col.get();
+  }catch(error){
+    throw error;
+  }
+  const existing = new Set();
+  snap.forEach(doc => existing.add(doc.id));
+
+  const jobs = [];
+  for(const [id, fieldData] of Object.entries(edits)){
+    if(existing.has(id) || !fieldData || !Object.keys(fieldData).length) continue;
+    jobs.push(col.doc(id).set({
+      kind: id.startsWith("custom-") ? "custom" : "base",
+      fields: fieldData,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, {merge:true}));
+  }
+  for(const rec of customRecords){
+    if(existing.has(rec.id)) continue;
+    const base = {};
+    Object.keys(rec).forEach(k => {
+      if(k !== "custom" && !fields.includes(k)) base[k] = rec[k];
+    });
+    jobs.push(col.doc(rec.id).set({
+      kind: "custom",
+      custom: true,
+      record: base,
+      fields: edits[rec.id] || {},
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, {merge:true}));
+  }
+  if(jobs.length) await Promise.all(jobs);
+}
+
+function subscribeCloud(){
+  if(!db) return;
+  if(cloudUnsubscribe) cloudUnsubscribe();
+
+  cloudUnsubscribe = db.collection(CLOUD_COLLECTION).onSnapshot(
+    {includeMetadataChanges:true},
+    snapshot => {
+      const cloudCustom = [];
+      const seenCustom = new Set();
+
+      snapshot.forEach(doc => {
+        const d = doc.data() || {};
+        const id = doc.id;
+        const incomingFields = d.fields && typeof d.fields === "object" ? d.fields : {};
+
+        if(Object.keys(incomingFields).length){
+          edits[id] = {...(edits[id] || {}), ...incomingFields};
+        }
+
+        if(d.kind === "custom" || d.custom === true){
+          const base = d.record && typeof d.record === "object" ? {...d.record} : {};
+          base.id = id;
+          base.custom = true;
+          fields.forEach(f => {
+            if(base[f] == null) base[f] = "";
+          });
+          cloudCustom.push(base);
+          seenCustom.add(id);
+        }
+      });
+
+      // Cloud custom records are authoritative; keep only local custom records that
+      // have pending local writes and are not yet visible in the snapshot.
+      const pendingLocal = customRecords.filter(r =>
+        !seenCustom.has(r.id) &&
+        snapshot.metadata.hasPendingWrites
+      );
+      customRecords = [...cloudCustom, ...pendingLocal];
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
+      localStorage.setItem(CUSTOM_KEY, JSON.stringify(customRecords));
+
+      cloudReady = true;
+      setCloudState(
+        snapshot.metadata.fromCache ? "Firebase bağlı · önbellekten gösteriliyor" : "Firebase bağlı · çevrimiçi kayıt aktif",
+        "online"
+      );
+      rebuild();
+      updateStats();
+      render();
+    },
+    error => {
+      console.error("Firestore snapshot:", error);
+      cloudReady = false;
+      setCloudState(cloudErrorMessage(error) + " · yerel kayıt aktif", "offline");
+    }
+  );
+}
+
+function scheduleCloudSave(id, immediate=false){
+  if(!db) return;
+  if(cloudTimers.has(id)){
+    clearTimeout(cloudTimers.get(id));
+    cloudTimers.delete(id);
+  }
+  const delay = immediate ? 0 : 650;
+  const timer = setTimeout(async () => {
+    cloudTimers.delete(id);
+    try{
+      const rec = records.find(x => x.id === id);
+      const payload = {
+        kind: rec && rec.custom ? "custom" : "base",
+        fields: edits[id] || {},
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      if(rec && rec.custom){
+        const base = {
+          id: rec.id,
+          area: rec.area,
+          level: rec.level,
+          "Kurum Adı": rec["Kurum Adı"]
+        };
+        payload.custom = true;
+        payload.record = base;
+      }
+      await db.collection(CLOUD_COLLECTION).doc(id).set(payload, {merge:true});
+      cloudReady = true;
+      setCloudState("Firebase'e kaydedildi", "online");
+      clearTimeout(window.__cloudSavedTimer);
+      window.__cloudSavedTimer = setTimeout(
+        () => setCloudState("Firebase bağlı · çevrimiçi kayıt aktif", "online"),
+        1000
+      );
+    }catch(error){
+      console.error("Cloud save:", error);
+      setCloudState(cloudErrorMessage(error) + " · yerel kayıt korundu", "offline");
+    }
+  }, delay);
+  cloudTimers.set(id, timer);
+}
+
+async function cloudAddCustom(rec){
+  if(!db) return;
+  try{
+    await db.collection(CLOUD_COLLECTION).doc(rec.id).set({
+      kind:"custom",
+      custom:true,
+      record:{
+        id:rec.id,
+        area:rec.area,
+        level:rec.level,
+        "Kurum Adı":rec["Kurum Adı"]
+      },
+      fields: edits[rec.id] || {},
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, {merge:true});
+  }catch(error){
+    console.error("Cloud custom add:", error);
+    setCloudState(cloudErrorMessage(error) + " · kurum yerelde kaydedildi", "offline");
+  }
+}
+
+async function cloudDeleteRecord(id){
+  if(!db) return;
+  try{
+    await db.collection(CLOUD_COLLECTION).doc(id).delete();
+  }catch(error){
+    console.error("Cloud delete:", error);
+    setCloudState(cloudErrorMessage(error) + " · silme buluta ulaşmadı", "offline");
+  }
+}
+
+async function clearCloudData(){
+  if(!db) return;
+  const snap = await db.collection(CLOUD_COLLECTION).get();
+  const docs = snap.docs;
+  for(let i=0;i<docs.length;i+=450){
+    const batch = db.batch();
+    docs.slice(i,i+450).forEach(doc => batch.delete(doc.ref));
+    await batch.commit();
+  }
+}
+
+function safeParse(value, fallback){
+  try { return value ? JSON.parse(value) : fallback; } catch(e){ return fallback; }
+}
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+function makeRecord(base){
+  const saved = edits[base.id] || {};
+  const r = {...base};
+  fields.forEach(f => {
+    if (Object.prototype.hasOwnProperty.call(saved,f)) r[f] = saved[f];
+    if (r[f] == null) r[f] = "";
+  });
+  return r;
+}
+function rebuild(){
+  records = [...SOURCE.records, ...customRecords].map(makeRecord);
+}
+function persistField(id, field, value){
+  if(!edits[id]) edits[id] = {};
+  edits[id][field] = value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
+  const rec = records.find(x => x.id === id);
+  if(rec) rec[field] = value;
+  setCloudState(db ? "Firebase'e kaydediliyor…" : "Yerel kayıt aktif", db ? "pending" : "offline");
+  scheduleCloudSave(id, field.includes("Görüşme") || field.includes("Sonuç"));
+  updateStats();
+}
+function persistCustom(){
+  localStorage.setItem(CUSTOM_KEY, JSON.stringify(customRecords));
+}
+function resultSelect(id, field, value, alt){
+  const cls = value === "Olumlu" ? "status-positive" : value === "Olumsuz" ? "status-negative" : "";
+  return `<select class="cell-select ${cls}" data-id="${esc(id)}" data-field="${esc(field)}" data-kind="result">
+    <option value=""></option>
+    <option value="Olumlu" ${value==="Olumlu"?"selected":""}>Olumlu</option>
+    <option value="Olumsuz" ${value==="Olumsuz"?"selected":""}>Olumsuz</option>
+  </select>`;
+}
+function interviewSelect(id, field, value){
+  const cls = value === "Evet" ? "interview-yes" : value === "Hayır" ? "interview-no" : "";
+  return `<select class="cell-select ${cls}" data-id="${esc(id)}" data-field="${esc(field)}" data-kind="interview">
+    <option value=""></option>
+    <option value="Evet" ${value==="Evet"?"selected":""}>Evet</option>
+    <option value="Hayır" ${value==="Hayır"?"selected":""}>Hayır</option>
+  </select>`;
+}
+function textInput(id, field, value, type="text"){
+  return `<input class="cell-input" type="${type}" value="${esc(value)}" data-id="${esc(id)}" data-field="${esc(field)}" autocomplete="off">`;
+}
+function renderCell(rec, field){
+  if(field.includes("Görüşme")) return interviewSelect(rec.id,field,rec[field]);
+  if(field.includes("Sonuç")) return resultSelect(rec.id,field,rec[field]);
+  return textInput(rec.id,field,rec[field],field.includes("Telefon")?"tel":"text");
+}
+function currentFiltered(){
+  const q = document.getElementById("searchInput").value.trim().toLocaleLowerCase("tr-TR");
+  const level = document.getElementById("levelFilter").value;
+  const result = document.getElementById("resultFilter").value;
+  const empty = document.getElementById("emptyCandidate").checked;
+  return records.filter(r => {
+    if(activeArea !== "Tümü" && r.area !== activeArea) return false;
+    if(level && r.level !== level) return false;
+    if(result === "Bos" && r["Sonuç (Olumlu/Olumsuz)"]) return false;
+    if(result && result !== "Bos" && r["Sonuç (Olumlu/Olumsuz)"] !== result) return false;
+    if(empty && r["Koordinatör Adayı"]) return false;
+    if(q){
+      const hay = [r["Kurum Adı"],r["Koordinatör Adayı"],r["Telefon Numarası"],r["Referans Olan Kişi"],
+        r["Alternatif Koordinatör Adayı"],r["Alternatif Telefon Numarası"],r["Alternatif Referans Olan Kişi"]]
+        .join(" ").toLocaleLowerCase("tr-TR");
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+function render(){
+  const rows = currentFiltered();
+  document.getElementById("visibleCount").textContent = rows.length;
+  const host = document.getElementById("tableHost");
+  if(!rows.length){
+    const isDistrictEmpty = activeArea === "İLÇELER" && !document.getElementById("searchInput").value && !document.getElementById("levelFilter").value && !document.getElementById("resultFilter").value && !document.getElementById("emptyCandidate").checked;
+    host.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">✦</div>
+      <h3>${isDistrictEmpty ? "İlçeler bölümü henüz boş" : "Eşleşen kurum bulunamadı"}</h3>
+      <p>${isDistrictEmpty ? "Excel dosyasındaki İlçeler sayfasında kurum kaydı bulunmuyor. İsterseniz buradan kurum ekleyebilirsiniz." : "Arama veya filtreleri değiştirerek yeniden deneyin."}</p>
+      ${isDistrictEmpty ? '<button class="btn primary" onclick="openAddDialog()">＋ Kurum Ekle</button>' : ''}
+    </div>`;
+    return;
+  }
+  const desktopTable = `<div class="table-scroll">
+    <table>
+      <thead><tr>
+        <th>Kurum Adı</th>
+        <th class="primary-head">Koordinatör Adayı</th>
+        <th class="primary-head">Telefon</th>
+        <th class="primary-head">Referans</th>
+        <th class="primary-head">Görüşme?</th>
+        <th class="primary-head">Sonuç</th>
+        <th class="alt-head">Alternatif Aday</th>
+        <th class="alt-head">Alt. Telefon</th>
+        <th class="alt-head">Alt. Referans</th>
+        <th class="alt-head">Alt. Görüşme?</th>
+        <th class="alt-head">Alt. Sonuç</th>
+      </tr></thead>
+      <tbody>
+        ${rows.map(r => `<tr data-row="${esc(r.id)}">
+          <td><div class="school">
+            <div><div class="school-name">${esc(r["Kurum Adı"])}</div>
+              <div class="school-meta"><span class="badge area">${esc(r.area==="Köy ve Kasaba Okulları"?"Köy/Kasaba":r.area==="Merkez Okulları"?"Merkez":"İlçe")}</span><span class="badge">${esc(r.level)}</span>${r.custom?'<span class="badge custom">Eklenen</span>':''}</div>
+            </div>
+            ${r.custom?`<button class="remove" type="button" data-remove="${esc(r.id)}" title="Kurumu sil">✕</button>`:""}
+          </div></td>
+          <td class="primary-col">${renderCell(r,"Koordinatör Adayı")}</td>
+          <td class="primary-col">${renderCell(r,"Telefon Numarası")}</td>
+          <td class="primary-col">${renderCell(r,"Referans Olan Kişi")}</td>
+          <td class="primary-col">${renderCell(r,"Görüşme Sağlandı mı?")}</td>
+          <td class="primary-col">${renderCell(r,"Sonuç (Olumlu/Olumsuz)")}</td>
+          <td class="alt-col">${renderCell(r,"Alternatif Koordinatör Adayı")}</td>
+          <td class="alt-col">${renderCell(r,"Alternatif Telefon Numarası")}</td>
+          <td class="alt-col">${renderCell(r,"Alternatif Referans Olan Kişi")}</td>
+          <td class="alt-col">${renderCell(r,"Alternatif Görüşme Sağlandı mı?")}</td>
+          <td class="alt-col">${renderCell(r,"Alternatif Sonuç (Olumlu/Olumsuz)")}</td>
+        </tr>`).join("")}
+      </tbody>
+    </table>
+  </div>`;
+
+  const mobileCards = `<div class="mobile-cards">
+    ${rows.map(r => `<article class="mobile-card" data-row="${esc(r.id)}">
+      <div class="mobile-card-head">
+        <div>
+          <div class="school-name">${esc(r["Kurum Adı"])}</div>
+          <div class="school-meta">
+            <span class="badge area">${esc(r.area==="Köy ve Kasaba Okulları"?"Köy/Kasaba":r.area==="Merkez Okulları"?"Merkez":"İlçe")}</span>
+            <span class="badge">${esc(r.level)}</span>
+            ${r.custom?'<span class="badge custom">Eklenen</span>':''}
+          </div>
+        </div>
+      </div>
+
+      <section class="mobile-section">
+        <div class="mobile-section-title">Koordinatör Adayı</div>
+        <div class="mobile-field"><div class="mobile-label">Aday</div><div>${renderCell(r,"Koordinatör Adayı")}</div></div>
+        <div class="mobile-field"><div class="mobile-label">Telefon</div><div>${renderCell(r,"Telefon Numarası")}</div></div>
+        <div class="mobile-field"><div class="mobile-label">Referans</div><div>${renderCell(r,"Referans Olan Kişi")}</div></div>
+        <div class="mobile-field"><div class="mobile-label">Görüşme</div><div>${renderCell(r,"Görüşme Sağlandı mı?")}</div></div>
+        <div class="mobile-field"><div class="mobile-label">Sonuç</div><div>${renderCell(r,"Sonuç (Olumlu/Olumsuz)")}</div></div>
+      </section>
+
+      <section class="mobile-section alt">
+        <div class="mobile-section-title">Alternatif Aday</div>
+        <div class="mobile-field"><div class="mobile-label">Aday</div><div>${renderCell(r,"Alternatif Koordinatör Adayı")}</div></div>
+        <div class="mobile-field"><div class="mobile-label">Telefon</div><div>${renderCell(r,"Alternatif Telefon Numarası")}</div></div>
+        <div class="mobile-field"><div class="mobile-label">Referans</div><div>${renderCell(r,"Alternatif Referans Olan Kişi")}</div></div>
+        <div class="mobile-field"><div class="mobile-label">Görüşme</div><div>${renderCell(r,"Alternatif Görüşme Sağlandı mı?")}</div></div>
+        <div class="mobile-field"><div class="mobile-label">Sonuç</div><div>${renderCell(r,"Alternatif Sonuç (Olumlu/Olumsuz)")}</div></div>
+      </section>
+
+      ${r.custom?`<div class="mobile-actions"><button class="mobile-remove" type="button" data-remove="${esc(r.id)}">Kurumu Sil</button></div>`:""}
+    </article>`).join("")}
+  </div>`;
+
+  host.innerHTML = desktopTable + mobileCards;
+  bindTableEvents();
+}
+function bindTableEvents(){
+  document.querySelectorAll("[data-field]").forEach(el => {
+    const evt = el.tagName === "SELECT" ? "change" : "input";
+    el.addEventListener(evt, e => {
+      const id=e.target.dataset.id, field=e.target.dataset.field, value=e.target.value;
+      persistField(id,field,value);
+      if(e.target.dataset.kind==="result"){
+        e.target.classList.toggle("status-positive",value==="Olumlu");
+        e.target.classList.toggle("status-negative",value==="Olumsuz");
+      }
+      if(e.target.dataset.kind==="interview"){
+        e.target.classList.toggle("interview-yes",value==="Evet");
+        e.target.classList.toggle("interview-no",value==="Hayır");
+      }
+      if(document.getElementById("resultFilter").value || document.getElementById("emptyCandidate").checked) render();
+    });
+  });
+  document.querySelectorAll("[data-remove]").forEach(btn => btn.addEventListener("click", e => removeCustom(e.currentTarget.dataset.remove)));
+}
+function updateStats(){
+  rebuild();
+  const total=records.length;
+  const cand=records.filter(r=>r["Koordinatör Adayı"]).length;
+  const interview=records.filter(r=>r["Görüşme Sağlandı mı?"]==="Evet").length;
+  const pos=records.filter(r=>r["Sonuç (Olumlu/Olumsuz)"]==="Olumlu").length;
+  const alt=records.filter(r=>r["Alternatif Koordinatör Adayı"]).length;
+  document.getElementById("statTotal").textContent=total;
+  document.getElementById("statCandidate").textContent=cand;
+  document.getElementById("statInterview").textContent=interview;
+  document.getElementById("statPositive").textContent=pos;
+  document.getElementById("statAlt").textContent=alt;
+  document.getElementById("countAll").textContent=total;
+  document.getElementById("countCenter").textContent=records.filter(r=>r.area==="Merkez Okulları").length;
+  document.getElementById("countVillage").textContent=records.filter(r=>r.area==="Köy ve Kasaba Okulları").length;
+  document.getElementById("countDistrict").textContent=records.filter(r=>r.area==="İLÇELER").length;
+}
+function openAddDialog(){
+  const d=document.getElementById("addDialog");
+  document.getElementById("newArea").value = activeArea==="Tümü" ? "Merkez Okulları" : activeArea;
+  document.getElementById("newSchool").value="";
+  d.showModal();
+  setTimeout(()=>document.getElementById("newSchool").focus(),50);
+}
+async function removeCustom(id){
+  if(!confirm("Bu eklenen kurumu silmek istediğinize emin misiniz? Bu işlem çevrimiçi kayıttan da siler.")) return;
+  customRecords = customRecords.filter(r=>r.id!==id);
+  delete edits[id];
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(edits));
+  persistCustom(); rebuild(); updateStats(); render();
+  await cloudDeleteRecord(id);
+  toast("Kurum silindi.");
+}
+function toast(msg){
+  const el=document.getElementById("toast"); el.textContent=msg; el.classList.add("show");
+  clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>el.classList.remove("show"),1700);
+}
+function exportCSV(){
+  rebuild();
+  const cols=["Bölüm","Kurum Türü","Kurum Adı",...fields];
+  const quote=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+  const lines=[cols.map(quote).join(";")];
+  records.forEach(r=>lines.push([r.area,r.level,r["Kurum Adı"],...fields.map(f=>r[f])].map(quote).join(";")));
+  downloadBlob(new Blob(["\ufeff"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}),"iyilikte_yarisan_siniflar_koordinator_takip.csv");
+  toast("CSV dosyası hazırlandı.");
+}
+function backup(){
+  rebuild();
+  const data={version:1,createdAt:new Date().toISOString(),edits,customRecords};
+  downloadBlob(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),"iyilikte_yarisan_siniflar_yedek.json");
+  toast("Yedek dosyası hazırlandı.");
+}
+function downloadBlob(blob,name){
+  const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function importBackup(file){
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const d=JSON.parse(reader.result);
+      if(!d || d.version!==1 || typeof d.edits!=="object" || !Array.isArray(d.customRecords)) throw new Error();
+      edits=d.edits;customRecords=d.customRecords;
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(edits));persistCustom();rebuild();updateStats();render();
+      if(db){
+        Object.keys(edits).forEach(id => scheduleCloudSave(id, true));
+        customRecords.forEach(rec => cloudAddCustom(rec));
+      }
+      toast("Yedek geri yüklendi ve Firebase ile eşitleniyor.");
+    }catch(e){alert("Bu dosya geçerli bir panel yedeği değil.");}
+  };
+  reader.readAsText(file);
+}
+document.getElementById("searchInput").addEventListener("input",render);
+document.getElementById("levelFilter").addEventListener("change",render);
+document.getElementById("resultFilter").addEventListener("change",render);
+document.getElementById("emptyCandidate").addEventListener("change",render);
+document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));tab.classList.add("active");
+  activeArea=tab.dataset.area;render();
+}));
+document.getElementById("addBtn").addEventListener("click",openAddDialog);
+document.getElementById("cancelAdd").addEventListener("click",()=>document.getElementById("addDialog").close());
+document.getElementById("addForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const name=document.getElementById("newSchool").value.trim();
+  if(!name) return;
+  const rec={
+    id:"custom-"+Date.now()+"-"+Math.random().toString(36).slice(2,7),
+    area:document.getElementById("newArea").value,
+    level:document.getElementById("newLevel").value,
+    "Kurum Adı":name,custom:true
+  };
+  fields.forEach(f=>rec[f]="");
+  customRecords.push(rec);persistCustom();rebuild();updateStats();document.getElementById("addDialog").close();
+  cloudAddCustom(rec);
+  activeArea=rec.area;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.area===activeArea));
+  render();toast("Kurum eklendi.");
+});
+document.getElementById("csvBtn").addEventListener("click",exportCSV);
+document.getElementById("backupBtn").addEventListener("click",backup);
+document.getElementById("importBtn").addEventListener("click",()=>document.getElementById("importFile").click());
+document.getElementById("importFile").addEventListener("change",e=>{if(e.target.files[0]) importBackup(e.target.files[0]);e.target.value="";});
+document.getElementById("resetBtn").addEventListener("click",async ()=>{
+  if(!confirm("TÜM çevrimiçi aday kayıtları ve eklenen kurumlar Firebase'den silinecek ve Excel'deki başlangıç listesine dönülecek. Devam edilsin mi?")) return;
+  if(!confirm("Bu işlem diğer telefon ve bilgisayarlardaki kayıtları da etkiler. Kesin olarak sıfırlamak istiyor musunuz?")) return;
+  try{
+    if(db) await clearCloudData();
+    edits={};customRecords=[];
+    localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(CUSTOM_KEY);
+    rebuild();updateStats();render();
+    toast("Tüm kayıtlar başlangıç durumuna döndürüldü.");
+  }catch(error){
+    console.error("Reset:", error);
+    alert("Firebase verileri silinemedi. Yetki kurallarını kontrol edin.");
+  }
+});
+
+document.getElementById("loginForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const btn=document.getElementById("loginBtn");
+  const err=document.getElementById("loginError");
+  const username=document.getElementById("loginUsername").value.trim();
+  const password=document.getElementById("loginPassword").value;
+  err.classList.remove("show");
+  if(!auth){
+    err.textContent="Firebase henüz hazır değil.";err.classList.add("show");return;
+  }
+  const email=usernameToEmail(username);
+  if(!email || email.startsWith("@")){
+    err.textContent="Geçerli bir kullanıcı adı girin.";err.classList.add("show");return;
+  }
+  btn.disabled=true;btn.textContent="Giriş yapılıyor…";
+  try{
+    await auth.signInWithEmailAndPassword(email,password);
+    document.getElementById("loginPassword").value="";
+  }catch(error){
+    err.textContent=loginErrorMessage(error);err.classList.add("show");
+  }finally{
+    btn.disabled=false;btn.textContent="Giriş Yap";
+  }
+});
+
+document.getElementById("passwordToggle").addEventListener("click",()=>{
+  const input=document.getElementById("loginPassword");
+  const visible=input.type==="text";
+  input.type=visible?"password":"text";
+  document.getElementById("passwordToggle").textContent=visible?"Göster":"Gizle";
+});
+
+document.getElementById("logoutBtn").addEventListener("click",async()=>{
+  if(!auth) return;
+  try{
+    if(cloudUnsubscribe){cloudUnsubscribe();cloudUnsubscribe=null;}
+    await auth.signOut();
+    toast("Oturum kapatıldı.");
+  }catch(error){
+    alert("Oturum kapatılamadı. Lütfen tekrar deneyin.");
+  }
+});
+
+document.getElementById("sourceName").textContent=SOURCE.sourceFile;
+rebuild();updateStats();render();
+initFirebase();
+</script>
+</body>
+</html>
