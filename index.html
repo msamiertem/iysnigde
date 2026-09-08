@@ -163,10 +163,35 @@
   td.alt-col{background:#fcfdff}
   tr:hover td.primary-col{background:#f8fcfa}
   tr:hover td.alt-col{background:#f8fbff}
-  .cell-select.status-positive{background:#eaf7f0;color:#176444;font-weight:800}
-  .cell-select.status-negative{background:#fff0f0;color:#aa3333;font-weight:800}
-  .cell-select.interview-yes{background:#eef8f3;color:#1f6a4d;font-weight:750}
-  .cell-select.interview-no{background:#f5f5f5;color:#737b77;font-weight:750}
+  .cell-select.status-positive{background:#dff5e8;color:#12623f;font-weight:850;border-color:#9dd8b5}
+  .cell-select.status-negative{background:#ffe3e3;color:#a72727;font-weight:850;border-color:#efaaaa}
+  .cell-select.interview-yes{background:#dff5e8;color:#12623f;font-weight:850;border-color:#9dd8b5}
+  .cell-select.interview-no{background:#ffe3e3;color:#a72727;font-weight:850;border-color:#efaaaa}
+
+  /* Durum seçildiğinde yalnızca select değil, hücrenin tamamı renklensin. */
+  td.state-positive, td.state-interview-yes{background:#eaf8f0 !important}
+  td.state-negative, td.state-interview-no{background:#fff0f0 !important}
+  .mobile-field.state-positive, .mobile-field.state-interview-yes{background:#eef9f3}
+  .mobile-field.state-negative, .mobile-field.state-interview-no{background:#fff2f2}
+
+  .settings-wrap{position:relative;margin-left:auto}
+  .settings-btn{white-space:nowrap}
+  .settings-menu{
+    position:absolute;right:0;top:48px;z-index:20;width:235px;
+    background:#fff;border:1px solid var(--slate-200);border-radius:14px;
+    box-shadow:0 18px 45px rgba(22,55,42,.16);padding:8px;display:none;
+  }
+  .settings-menu.open{display:block}
+  .settings-title{
+    padding:7px 9px 9px;font-size:11px;font-weight:850;color:var(--slate-500);
+    text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--slate-100);margin-bottom:5px;
+  }
+  .settings-action{
+    width:100%;height:42px;border:0;background:transparent;border-radius:9px;padding:0 10px;
+    display:flex;align-items:center;gap:9px;text-align:left;color:var(--slate-700);font-weight:750;
+  }
+  .settings-action:hover{background:var(--green-50);color:var(--green-900)}
+  .settings-hint{font-size:10px;color:var(--slate-500);padding:7px 9px 3px;line-height:1.35}
   .empty-state{padding:54px 22px;text-align:center;color:var(--slate-500)}
   .empty-icon{width:54px;height:54px;margin:0 auto 12px;border-radius:16px;background:var(--green-50);display:grid;place-items:center}
   .empty-state h3{color:var(--slate-950);margin:0 0 5px;font-size:18px}
@@ -263,7 +288,10 @@
     .toolbar select.control{min-width:0;width:100%;font-size:13px}
     .toolbar .check{grid-column:1/-1;justify-content:flex-start}
     .toolbar .btn{justify-content:center;padding:0 8px;font-size:12px}
-    #addBtn{grid-column:1/-1}
+    #addBtn{grid-column:1/2}
+    .settings-wrap{grid-column:2/3;margin-left:0}
+    .settings-wrap>.btn{width:100%}
+    .settings-menu{position:fixed;left:10px;right:10px;top:auto;bottom:12px;width:auto;max-height:70vh;overflow:auto}
     .tabs{
       padding:7px 8px 0;gap:3px;scrollbar-width:none;-webkit-overflow-scrolling:touch;
     }
@@ -441,13 +469,26 @@
         <option value="Olumsuz">Olumsuz</option>
         <option value="Bos">Sonuç girilmemiş</option>
       </select>
+      <select id="interviewFilter" class="control" aria-label="Görüşme durumu">
+        <option value="">Tüm görüşmeler</option>
+        <option value="Evet">Görüşme yapıldı</option>
+        <option value="Hayır">Görüşme yapılmadı</option>
+        <option value="Bos">Görüşme durumu girilmemiş</option>
+      </select>
       <label class="check"><input type="checkbox" id="emptyCandidate"> Adayı boş olanlar</label>
       <button class="btn primary" id="addBtn" type="button">＋ Yeni Kurum Ekle</button>
-      <button class="btn" id="csvBtn" type="button">CSV İndir</button>
-      <button class="btn" id="backupBtn" type="button">Yedek Al</button>
-      <button class="btn" id="importBtn" type="button">Yedek Yükle</button>
-      <input type="file" id="importFile" accept=".json,application/json" hidden>
-      <button class="btn danger" id="resetBtn" type="button">Tümünü Sıfırla</button>
+
+      <div class="settings-wrap">
+        <button class="btn settings-btn" id="settingsBtn" type="button" aria-expanded="false">⚙ Ayarlar</button>
+        <div class="settings-menu" id="settingsMenu" role="menu">
+          <div class="settings-title">Veri İşlemleri</div>
+          <button class="settings-action" id="csvBtn" type="button">⬇ <span>CSV İndir</span></button>
+          <button class="settings-action" id="backupBtn" type="button">⤓ <span>Yedek Al</span></button>
+          <button class="settings-action" id="importBtn" type="button">⤒ <span>Yedek Yükle</span></button>
+          <input type="file" id="importFile" accept=".json,application/json" hidden>
+          <div class="settings-hint">CSV dışa aktarımı ve JSON yedek işlemleri burada bulunur.</div>
+        </div>
+      </div>
     </div>
 
     <nav class="tabs" aria-label="Bölümler">
@@ -736,6 +777,36 @@ function renderPreservePosition(){
   });
 }
 
+function applyVisualState(el, value){
+  if(!el) return;
+
+  el.classList.remove("status-positive","status-negative","interview-yes","interview-no");
+  const box = el.closest("td, .mobile-field");
+  if(box){
+    box.classList.remove("state-positive","state-negative","state-interview-yes","state-interview-no");
+  }
+
+  if(el.dataset.kind === "result"){
+    if(value === "Olumlu"){
+      el.classList.add("status-positive");
+      if(box) box.classList.add("state-positive");
+    }else if(value === "Olumsuz"){
+      el.classList.add("status-negative");
+      if(box) box.classList.add("state-negative");
+    }
+  }
+
+  if(el.dataset.kind === "interview"){
+    if(value === "Evet"){
+      el.classList.add("interview-yes");
+      if(box) box.classList.add("state-interview-yes");
+    }else if(value === "Hayır"){
+      el.classList.add("interview-no");
+      if(box) box.classList.add("state-interview-no");
+    }
+  }
+}
+
 function syncDomValuesFromRecords(){
   document.querySelectorAll("[data-field]").forEach(el => {
     if(el === document.activeElement) return;
@@ -748,14 +819,7 @@ function syncDomValuesFromRecords(){
     const value = rec[field] ?? "";
     if(el.value !== value) el.value = value;
 
-    if(el.dataset.kind === "result"){
-      el.classList.toggle("status-positive", value === "Olumlu");
-      el.classList.toggle("status-negative", value === "Olumsuz");
-    }
-    if(el.dataset.kind === "interview"){
-      el.classList.toggle("interview-yes", value === "Evet");
-      el.classList.toggle("interview-no", value === "Hayır");
-    }
+    applyVisualState(el, value);
   });
 }
 
@@ -1002,12 +1066,15 @@ function currentFiltered(){
   const q = document.getElementById("searchInput").value.trim().toLocaleLowerCase("tr-TR");
   const level = document.getElementById("levelFilter").value;
   const result = document.getElementById("resultFilter").value;
+  const interview = document.getElementById("interviewFilter").value;
   const empty = document.getElementById("emptyCandidate").checked;
   return records.filter(r => {
     if(activeArea !== "Tümü" && r.area !== activeArea) return false;
     if(level && r.level !== level) return false;
     if(result === "Bos" && r["Sonuç (Olumlu/Olumsuz)"]) return false;
     if(result && result !== "Bos" && r["Sonuç (Olumlu/Olumsuz)"] !== result) return false;
+    if(interview === "Bos" && r["Görüşme Sağlandı mı?"]) return false;
+    if(interview && interview !== "Bos" && r["Görüşme Sağlandı mı?"] !== interview) return false;
     if(empty && r["Koordinatör Adayı"]) return false;
     if(q){
       const hay = [r["Kurum Adı"],r["Koordinatör Adayı"],r["Telefon Numarası"],r["Referans Olan Kişi"],
@@ -1023,7 +1090,7 @@ function render(){
   document.getElementById("visibleCount").textContent = rows.length;
   const host = document.getElementById("tableHost");
   if(!rows.length){
-    const isDistrictEmpty = activeArea === "İLÇELER" && !document.getElementById("searchInput").value && !document.getElementById("levelFilter").value && !document.getElementById("resultFilter").value && !document.getElementById("emptyCandidate").checked;
+    const isDistrictEmpty = activeArea === "İLÇELER" && !document.getElementById("searchInput").value && !document.getElementById("levelFilter").value && !document.getElementById("resultFilter").value && !document.getElementById("interviewFilter").value && !document.getElementById("emptyCandidate").checked;
     host.innerHTML = `<div class="empty-state">
       <div class="empty-icon">✦</div>
       <h3>${isDistrictEmpty ? "İlçeler bölümü henüz boş" : "Eşleşen kurum bulunamadı"}</h3>
@@ -1058,13 +1125,13 @@ function render(){
           <td class="primary-col">${renderCell(r,"Koordinatör Adayı")}</td>
           <td class="primary-col">${renderCell(r,"Telefon Numarası")}</td>
           <td class="primary-col">${renderCell(r,"Referans Olan Kişi")}</td>
-          <td class="primary-col">${renderCell(r,"Görüşme Sağlandı mı?")}</td>
-          <td class="primary-col">${renderCell(r,"Sonuç (Olumlu/Olumsuz)")}</td>
+          <td class="primary-col ${r["Görüşme Sağlandı mı?"]==="Evet"?"state-interview-yes":r["Görüşme Sağlandı mı?"]==="Hayır"?"state-interview-no":""}">${renderCell(r,"Görüşme Sağlandı mı?")}</td>
+          <td class="primary-col ${r["Sonuç (Olumlu/Olumsuz)"]==="Olumlu"?"state-positive":r["Sonuç (Olumlu/Olumsuz)"]==="Olumsuz"?"state-negative":""}">${renderCell(r,"Sonuç (Olumlu/Olumsuz)")}</td>
           <td class="alt-col">${renderCell(r,"Alternatif Koordinatör Adayı")}</td>
           <td class="alt-col">${renderCell(r,"Alternatif Telefon Numarası")}</td>
           <td class="alt-col">${renderCell(r,"Alternatif Referans Olan Kişi")}</td>
-          <td class="alt-col">${renderCell(r,"Alternatif Görüşme Sağlandı mı?")}</td>
-          <td class="alt-col">${renderCell(r,"Alternatif Sonuç (Olumlu/Olumsuz)")}</td>
+          <td class="alt-col ${r["Alternatif Görüşme Sağlandı mı?"]==="Evet"?"state-interview-yes":r["Alternatif Görüşme Sağlandı mı?"]==="Hayır"?"state-interview-no":""}">${renderCell(r,"Alternatif Görüşme Sağlandı mı?")}</td>
+          <td class="alt-col ${r["Alternatif Sonuç (Olumlu/Olumsuz)"]==="Olumlu"?"state-positive":r["Alternatif Sonuç (Olumlu/Olumsuz)"]==="Olumsuz"?"state-negative":""}">${renderCell(r,"Alternatif Sonuç (Olumlu/Olumsuz)")}</td>
         </tr>`).join("")}
       </tbody>
     </table>
@@ -1088,8 +1155,8 @@ function render(){
         <div class="mobile-field"><div class="mobile-label">Aday</div><div>${renderCell(r,"Koordinatör Adayı")}</div></div>
         <div class="mobile-field"><div class="mobile-label">Telefon</div><div>${renderCell(r,"Telefon Numarası")}</div></div>
         <div class="mobile-field"><div class="mobile-label">Referans</div><div>${renderCell(r,"Referans Olan Kişi")}</div></div>
-        <div class="mobile-field"><div class="mobile-label">Görüşme</div><div>${renderCell(r,"Görüşme Sağlandı mı?")}</div></div>
-        <div class="mobile-field"><div class="mobile-label">Sonuç</div><div>${renderCell(r,"Sonuç (Olumlu/Olumsuz)")}</div></div>
+        <div class="mobile-field ${r["Görüşme Sağlandı mı?"]==="Evet"?"state-interview-yes":r["Görüşme Sağlandı mı?"]==="Hayır"?"state-interview-no":""}"><div class="mobile-label">Görüşme</div><div>${renderCell(r,"Görüşme Sağlandı mı?")}</div></div>
+        <div class="mobile-field ${r["Sonuç (Olumlu/Olumsuz)"]==="Olumlu"?"state-positive":r["Sonuç (Olumlu/Olumsuz)"]==="Olumsuz"?"state-negative":""}"><div class="mobile-label">Sonuç</div><div>${renderCell(r,"Sonuç (Olumlu/Olumsuz)")}</div></div>
       </section>
 
       <section class="mobile-section alt">
@@ -1097,8 +1164,8 @@ function render(){
         <div class="mobile-field"><div class="mobile-label">Aday</div><div>${renderCell(r,"Alternatif Koordinatör Adayı")}</div></div>
         <div class="mobile-field"><div class="mobile-label">Telefon</div><div>${renderCell(r,"Alternatif Telefon Numarası")}</div></div>
         <div class="mobile-field"><div class="mobile-label">Referans</div><div>${renderCell(r,"Alternatif Referans Olan Kişi")}</div></div>
-        <div class="mobile-field"><div class="mobile-label">Görüşme</div><div>${renderCell(r,"Alternatif Görüşme Sağlandı mı?")}</div></div>
-        <div class="mobile-field"><div class="mobile-label">Sonuç</div><div>${renderCell(r,"Alternatif Sonuç (Olumlu/Olumsuz)")}</div></div>
+        <div class="mobile-field ${r["Alternatif Görüşme Sağlandı mı?"]==="Evet"?"state-interview-yes":r["Alternatif Görüşme Sağlandı mı?"]==="Hayır"?"state-interview-no":""}"><div class="mobile-label">Görüşme</div><div>${renderCell(r,"Alternatif Görüşme Sağlandı mı?")}</div></div>
+        <div class="mobile-field ${r["Alternatif Sonuç (Olumlu/Olumsuz)"]==="Olumlu"?"state-positive":r["Alternatif Sonuç (Olumlu/Olumsuz)"]==="Olumsuz"?"state-negative":""}"><div class="mobile-label">Sonuç</div><div>${renderCell(r,"Alternatif Sonuç (Olumlu/Olumsuz)")}</div></div>
       </section>
 
       ${r.custom?`<div class="mobile-actions"><button class="mobile-remove" type="button" data-remove="${esc(r.id)}">Kurumu Sil</button></div>`:""}
@@ -1114,14 +1181,7 @@ function bindTableEvents(){
     el.addEventListener(evt, e => {
       const id=e.target.dataset.id, field=e.target.dataset.field, value=e.target.value;
       persistField(id,field,value);
-      if(e.target.dataset.kind==="result"){
-        e.target.classList.toggle("status-positive",value==="Olumlu");
-        e.target.classList.toggle("status-negative",value==="Olumsuz");
-      }
-      if(e.target.dataset.kind==="interview"){
-        e.target.classList.toggle("interview-yes",value==="Evet");
-        e.target.classList.toggle("interview-no",value==="Hayır");
-      }
+      applyVisualState(e.target, value);
       // ÖNEMLİ: Veri girişinde render() çağrılmaz.
       // Filtre açık olsa bile satır kullanıcı veri girerken yerinden oynamaz.
     });
@@ -1204,6 +1264,7 @@ function importBackup(file){
 document.getElementById("searchInput").addEventListener("input",()=>{remoteStructureChanged=false;render();});
 document.getElementById("levelFilter").addEventListener("change",()=>{remoteStructureChanged=false;render();});
 document.getElementById("resultFilter").addEventListener("change",()=>{remoteStructureChanged=false;render();});
+document.getElementById("interviewFilter").addEventListener("change",()=>{remoteStructureChanged=false;render();});
 document.getElementById("emptyCandidate").addEventListener("change",()=>{remoteStructureChanged=false;render();});
 document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{
   document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));tab.classList.add("active");
@@ -1228,25 +1289,31 @@ document.getElementById("addForm").addEventListener("submit",e=>{
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.area===activeArea));
   render();toast("Kurum eklendi.");
 });
-document.getElementById("csvBtn").addEventListener("click",exportCSV);
-document.getElementById("backupBtn").addEventListener("click",backup);
-document.getElementById("importBtn").addEventListener("click",()=>document.getElementById("importFile").click());
-document.getElementById("importFile").addEventListener("change",e=>{if(e.target.files[0]) importBackup(e.target.files[0]);e.target.value="";});
-document.getElementById("resetBtn").addEventListener("click",async ()=>{
-  if(!confirm("TÜM çevrimiçi aday kayıtları ve eklenen kurumlar Firebase'den silinecek ve Excel'deki başlangıç listesine dönülecek. Devam edilsin mi?")) return;
-  if(!confirm("Bu işlem diğer telefon ve bilgisayarlardaki kayıtları da etkiler. Kesin olarak sıfırlamak istiyor musunuz?")) return;
-  try{
-    if(db) await clearCloudData();
-    edits={};customRecords=[];
-    localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(CUSTOM_KEY);
-    rebuild();updateStats();render();
-    toast("Tüm kayıtlar başlangıç durumuna döndürüldü.");
-  }catch(error){
-    console.error("Reset:", error);
-    alert("Firebase verileri silinemedi. Yetki kurallarını kontrol edin.");
-  }
-});
+const settingsBtn = document.getElementById("settingsBtn");
+const settingsMenu = document.getElementById("settingsMenu");
 
+function closeSettings(){
+  settingsMenu.classList.remove("open");
+  settingsBtn.setAttribute("aria-expanded","false");
+}
+settingsBtn.addEventListener("click",e=>{
+  e.stopPropagation();
+  const willOpen = !settingsMenu.classList.contains("open");
+  settingsMenu.classList.toggle("open", willOpen);
+  settingsBtn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+});
+settingsMenu.addEventListener("click",e=>e.stopPropagation());
+document.addEventListener("click",closeSettings);
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSettings(); });
+
+document.getElementById("csvBtn").addEventListener("click",()=>{exportCSV();closeSettings();});
+document.getElementById("backupBtn").addEventListener("click",()=>{backup();closeSettings();});
+document.getElementById("importBtn").addEventListener("click",()=>document.getElementById("importFile").click());
+document.getElementById("importFile").addEventListener("change",e=>{
+  if(e.target.files[0]) importBackup(e.target.files[0]);
+  e.target.value="";
+  closeSettings();
+});
 document.getElementById("loginForm").addEventListener("submit", async e=>{
   e.preventDefault();
   const btn=document.getElementById("loginBtn");
